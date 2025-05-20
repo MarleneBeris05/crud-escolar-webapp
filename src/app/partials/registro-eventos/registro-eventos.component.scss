@@ -1,0 +1,114 @@
+.wrapper {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background-color: #FFFFFF;
+  padding: 2rem 1rem;
+}
+
+.section-registro {
+  width: 100%;
+  max-width: 650px;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.body-registro {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.title-user {
+  font-size: 28px;
+  font-family: 'Nexa-Bold', sans-serif;
+  letter-spacing: 1px;
+  color: #231F20;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+mat-form-field.mat-input {
+  width: 100% !important;
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+  border-radius: 8px;
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline-thick {
+  color: #0092B8 !important;
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-flex {
+  padding: 0 12px;
+  height: 48px;
+  align-items: center;
+}
+
+.section-buttons {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.btn-primary,
+.btn-danger {
+  width: 100%;
+  max-width: 300px;
+  height: 48px;
+  font-family: 'Nexa-Bold', sans-serif;
+  font-size: 16px;
+  border-radius: 8px;
+  text-align: center;
+  color: #fff;
+  font-weight: bold;
+}
+
+.btn-primary {
+  background-color: #0092B8 !important;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #017895 !important;
+}
+
+.btn-danger {
+  background-color: #DC3545 !important;
+  border: none;
+}
+
+.btn-danger:hover {
+  background-color: #B02A37 !important;
+}
+
+/* Checkbox group */
+.checkbox-group {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-left: 0.5rem;
+}
+
+/* Invalid feedback estilo */
+.invalid-feedback {
+  font-size: 14px;
+  color: #ff4d4f;
+  margin: -10px 0 10px 4px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .section-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
