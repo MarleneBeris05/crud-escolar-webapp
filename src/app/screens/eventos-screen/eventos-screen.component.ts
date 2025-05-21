@@ -15,6 +15,7 @@ import { FacadeService } from 'src/app/services/facade.service';
 export class EventosScreenComponent {
   public token : string = "";
   public lista_eventos: any[] = [];
+  public usuario_rol: string = '';
 
   //Para la tabla
   displayedColumns: string[] = ['nombre_evento', 'tipo_evento', 'fecha', 'hora_inicio', 'hora_fin', 'lugar', 'publico', 'programa', 'responsable', 'descripcion', 'cupo_max', 'editar', 'eliminar'];
@@ -40,10 +41,18 @@ export class EventosScreenComponent {
     if(this.token == ""){
       this.router.navigate([""]);
     }
-    //Obtener maestros
-    this.obtenerEventos();
     //Para paginador
     this.initPaginator();
+    this.usuario_rol = this.facadeService.getUserGroup();
+    this.displayedColumns = [
+        'nombre_evento', 'tipo_evento', 'fecha', 'hora_inicio', 'hora_fin',
+        'lugar', 'publico', 'programa', 'responsable', 'descripcion', 'cupo_max'
+      ];
+
+      if (this.usuario_rol === 'administrador') {
+        this.displayedColumns.push('editar', 'eliminar');
+      }
+    this.obtenerEventos();
   }
 
   public initPaginator(){
@@ -69,33 +78,56 @@ export class EventosScreenComponent {
     //this.dataSourceIngresos.paginator = this.paginator;
   }
 
-  public obtenerEventos(){
-    this.eventosService.obtenerListaEventos().subscribe(
-      (response)=>{
-        this.lista_eventos = response;
-        console.log("Lista users: ", this.lista_eventos);
-        if(this.lista_eventos.length > 0){
-          console.log("Maestros: ", this.lista_eventos);
+    public obtenerEventos() {
+      this.eventosService.obtenerListaEventos().subscribe(
+        (response) => {
+          let eventosFiltrados = response;
 
+          if (this.usuario_rol === 'alumno') {
+            eventosFiltrados = response.filter(evento => {
+              const publico = (evento.publico || []).map((p: string) =>
+                p.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, '')
+              );
+              return publico.includes('estudiantes') || publico.includes('publico general');
+            });
+          } else if (this.usuario_rol === 'maestro') {
+            eventosFiltrados = response.filter(evento => {
+              const publico = (evento.publico || []).map((p: string) =>
+                p.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, '')
+              );
+              return publico.includes('profesores') || publico.includes('publico general');
+            });
+          } else if (this.usuario_rol === 'administrador') {
+            // El administrador ve todos los eventos, no se filtra
+            eventosFiltrados = response;
+          }
+
+          this.lista_eventos = eventosFiltrados;
           this.dataSource = new MatTableDataSource<DatosEvento>(this.lista_eventos as DatosEvento[]);
+        },
+        (error) => {
+          alert("No se pudo obtener la lista de eventos");
         }
-      }, (error)=>{
-        alert("No se pudo obtener la lista de eventos");
-      }
-    );
-  }
+      );
+    }
+
 
     public goEditar(id: number){
     this.router.navigate(["registro-eventos/"+id]);
-  }
+    }
   
     public delete(id: number){
-    console.log("User:", id);
-    const dialogRef = this.dialog.open(EliminarEventoComponent,{
-      data: {id: id}, 
-      height: '288px',
-      width: '328px',
-    });
+      const evento = this.lista_eventos.find(e => e.id === id);
+
+      const dialogRef = this.dialog.open(EliminarEventoComponent, {
+        data: { 
+          id: id,
+          nombre_evento: evento?.nombre_evento || ''
+        }, 
+        height: '288px',
+        width: '328px',
+      });
+
 
     dialogRef.afterClosed().subscribe(result => {
       if(result.isDelete){
@@ -108,7 +140,6 @@ export class EventosScreenComponent {
       }
     });
   }
-
 }
 
 export interface DatosEvento {
@@ -120,7 +151,12 @@ export interface DatosEvento {
   lugar: string;
   publico: string;
   programa: string;
-  responsable_id: string;
+  responsable_id: {
+    user: {
+      first_name: string;
+      last_name: string;
+    }
+  };
   descripcion: string;
   cupo_max: number;
 }

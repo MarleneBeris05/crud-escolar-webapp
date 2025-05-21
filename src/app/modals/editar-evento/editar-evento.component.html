@@ -6,15 +6,15 @@
   </div>
 
   <div class="body-modal">
-    <h1 class="title-modal">Eliminar evento</h1>
-    <p>¿Estás segura de eliminar el evento <strong>{{ data.nombre_evento }}</strong>?</p>
+    <h1 class="title-modal">Editar evento</h1>
+    <p>¿Estás segura de editar el evento?</p>
 
     <div class="buttons-modal">
       <button mat-button class="btn-regresar" (click)="cerrar_modal()">
         Cancelar
       </button>
-      <button mat-button color="warn" class="btn-eliminar" (click)="eliminarEvento()">
-        Eliminar
+      <button mat-button color="warn" class="btn-editar" (click)="confirmarEdicion()">
+        Confirmar
       </button>
     </div>
   </div>

@@ -1,0 +1,79 @@
+.wrapper {
+  padding: 5px;
+}
+
+::ng-deep .mat-dialog-container {
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 16px;
+}
+
+.body-modal {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+  padding: 0 15px 30px 15px;
+}
+
+.icon-close {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 15px 0 0;
+}
+
+.bi-x-lg {
+  color: #e84150 !important;
+  font-size: 18px !important;
+}
+
+.title-modal {
+  font-family: Nexa-Bold;
+  font-size: 24px;
+  font-weight: bold;
+  color: #406779;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.descripcion {
+  font-family: Nexa;
+  font-size: 16px;
+  color: #000;
+  margin-bottom: 20px;
+}
+
+.buttons-modal {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.btn-regresar {
+  margin-top: 20px;
+  width: 132px;
+  height: 48px;
+  background: #f6f4f5;
+  box-shadow: 0px 6px 10px #4f480733;
+  border: 1px solid #f6f4f5;
+  font-family: Nexa-Bold;
+  font-size: 14px;
+  font-weight: bold;
+  color: #e84150 !important;
+  text-transform: uppercase;
+}
+
+.btn-editar {
+  margin-top: 20px;
+  width: 132px;
+  height: 48px;
+  background: #406779;
+  box-shadow: 0px 12px 20px #4e071433;
+  border: 1px solid #406779;
+  font-family: Nexa-Bold;
+  font-size: 14px;
+  font-weight: bold;
+  color: #ffffff !important;
+  text-transform: uppercase;
+}

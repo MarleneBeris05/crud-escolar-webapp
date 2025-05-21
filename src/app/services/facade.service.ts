@@ -97,20 +97,27 @@ export class FacadeService {
   }
 
 
-  saveUserData(user_data:any){
-    var secure = environment.url_api.indexOf("https")!=-1;
-    if(user_data.rol == "administrador"){
-      this.cookieService.set(user_id_cookie_name, user_data.id, undefined, undefined, undefined, secure, secure?"None":"Lax");
-      this.cookieService.set(user_email_cookie_name, user_data.email, undefined, undefined, undefined, secure, secure?"None":"Lax");
-      this.cookieService.set(user_complete_name_cookie_name, user_data.first_name + " " + user_data.last_name, undefined, undefined, undefined, secure, secure?"None":"Lax");
-    }else{
-      this.cookieService.set(user_id_cookie_name, user_data.user.id, undefined, undefined, undefined, secure, secure?"None":"Lax");
-      this.cookieService.set(user_email_cookie_name, user_data.user.email, undefined, undefined, undefined, secure, secure?"None":"Lax");
-      this.cookieService.set(user_complete_name_cookie_name, user_data.user.first_name + " " + user_data.user.last_name, undefined, undefined, undefined, secure, secure?"None":"Lax");
-    }
-    this.cookieService.set(session_cookie_name, user_data.token, undefined, undefined, undefined, secure, secure?"None":"Lax");
-    this.cookieService.set(group_name_cookie_name, user_data.rol, undefined, undefined, undefined, secure, secure?"None":"Lax");
+saveUserData(user_data: any) {
+  var secure = environment.url_api.indexOf("https") != -1;
+
+  this.cookieService.set(session_cookie_name, user_data.token, undefined, undefined, undefined, secure, secure ? "None" : "Lax");
+  this.cookieService.set(group_name_cookie_name, user_data.rol, undefined, undefined, undefined, secure, secure ? "None" : "Lax");
+
+  if (user_data.rol === "administrador") {
+    this.cookieService.set(user_id_cookie_name, user_data.id, undefined, undefined, undefined, secure, secure ? "None" : "Lax");
+    this.cookieService.set(user_email_cookie_name, user_data.email, undefined, undefined, undefined, secure, secure ? "None" : "Lax");
+    this.cookieService.set(user_complete_name_cookie_name, `${user_data.first_name} ${user_data.last_name}`, undefined, undefined, undefined, secure, secure ? "None" : "Lax");
+  } else if (user_data.user) {
+    // Validación segura
+    const { id, email, first_name, last_name } = user_data.user;
+    this.cookieService.set(user_id_cookie_name, id, undefined, undefined, undefined, secure, secure ? "None" : "Lax");
+    this.cookieService.set(user_email_cookie_name, email, undefined, undefined, undefined, secure, secure ? "None" : "Lax");
+    this.cookieService.set(user_complete_name_cookie_name, `${first_name} ${last_name}`, undefined, undefined, undefined, secure, secure ? "None" : "Lax");
+  } else {
+    console.error("No se pudo guardar el usuario: estructura inesperada", user_data);
   }
+}
+
 
   destroyUser(){
     this.cookieService.deleteAll();

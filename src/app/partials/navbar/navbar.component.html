@@ -22,7 +22,7 @@
             <li class="nav-item">
               <a class="nav-link" id="graficas" (click)="clickNavLink('graficas')">Gráficas</a>
             </li>
-            <li class="nav-item dropdown">
+            <li class="nav-item dropdown" *ngIf="rol!='alumno'">
               <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Registrar
               </a>
@@ -30,7 +30,7 @@
                 <li><a class="dropdown-item" (click)="goRegistro()" *ngIf="rol!='alumno'">Alumnos</a></li>
                 <li><a class="dropdown-item" (click)="goRegistro()" *ngIf="rol!='maestro' && rol!='alumno'">Maestros</a></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" (click)="goRegistroEvento()">Eventos Academicos</a></li>
+                <li><a class="dropdown-item" (click)="goRegistroEvento()" *ngIf="rol!='maestro'">Eventos Academicos</a></li>
               </ul>
             </li>
           </ng-container>

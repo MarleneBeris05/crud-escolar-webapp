@@ -48,6 +48,7 @@ import { EventosScreenComponent } from './screens/eventos-screen/eventos-screen.
 import { RegistroEventosComponent } from './partials/registro-eventos/registro-eventos.component';
 import { EliminarEventoComponent } from './modals/eliminar-evento/eliminar-evento.component';
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
+import { EditarEventoComponent } from './modals/editar-evento/editar-evento.component';
 
 
 @NgModule({
@@ -67,7 +68,8 @@ import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
     GraficasScreenComponent,
     EventosScreenComponent,
     RegistroEventosComponent,
-    EliminarEventoComponent
+    EliminarEventoComponent,
+    EditarEventoComponent
   ],
   imports: [
     BrowserModule,

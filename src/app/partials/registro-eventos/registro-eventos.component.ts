@@ -6,7 +6,8 @@ import { FacadeService } from 'src/app/services/facade.service';
 import { AdministradoresService } from 'src/app/services/administradores.service';
 import * as $ from 'jquery';
 import { DatePipe } from '@angular/common';
-import { AbstractControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { EditarEventoComponent } from 'src/app/modals/editar-evento/editar-evento.component';
 
 
 @Component({
@@ -41,7 +42,7 @@ export class RegistroEventosComponent implements OnInit {
   public publicos:any[] = [
     {value: '1', nombre: 'Estudiantes'},
     {value: '2', nombre: 'Profesores'},
-    {value: '3', nombre: 'Público General'},
+    {value: '3', nombre: 'Publico General'},
   ];
 
   constructor(
@@ -51,7 +52,8 @@ export class RegistroEventosComponent implements OnInit {
     public activatedRoute: ActivatedRoute,
     private facadeService: FacadeService,
     private adminService: AdministradoresService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private dialog: MatDialog
   ) {}
 
 ngOnInit(): void {
@@ -71,11 +73,23 @@ ngOnInit(): void {
         
         this.evento.hora_inicio = this.formatearHora(this.evento.hora_inicio);
         this.evento.hora_fin = this.formatearHora(this.evento.hora_fin);
+        this.evento.responsable_id = Number(this.evento.responsable_id);
 
         // Asegurar que público esté definido como arreglo
-        if (!Array.isArray(this.evento.publico)) {
-          this.evento.publico = [];
+      try {
+        if (typeof this.evento.publico === 'string') {
+          // Caso 1: ya viene como string JSON → parsear
+          if (this.evento.publico.startsWith('[')) {
+            this.evento.publico = JSON.parse(this.evento.publico);
+          } else {
+            // Caso 2: viene como "Estudiantes,Profesores"
+            this.evento.publico = this.evento.publico.split(',').map((item: string) => item.trim());
+          }
         }
+      } catch (e) {
+        console.error('Error al parsear público:', e);
+        this.evento.publico = [];
+      }
       },
       (error) => {
         console.error('Error al obtener evento:', error);
@@ -86,9 +100,7 @@ ngOnInit(): void {
     this.evento = this.eventosService.esquemaEvento();
     this.token = this.facadeService.getSessionToken();
   }
-}
-
-  
+}  
 
   public regresar() {
     this.location.back();
@@ -105,6 +117,14 @@ ngOnInit(): void {
     this.evento.fecha = this.datePipe.transform(this.evento.fecha, 'yyyy-MM-dd');
     this.evento.hora_inicio = this.convertirHora(this.evento.hora_inicio);
     this.evento.hora_fin = this.convertirHora(this.evento.hora_fin);
+
+    const hora_inicio = this.evento.hora_inicio;
+    const hora_fin = this.evento.hora_fin;
+
+    if (hora_inicio >= hora_fin) {
+      alert("La hora de inicio debe ser menor que la hora de fin.");
+      return;
+    }
       //Aquí si todo es correcto vamos a registrar - aquí se manda a llamar al servicio
     this.eventosService.registrarEvento(this.evento).subscribe(
         (response)=>{
@@ -121,45 +141,62 @@ ngOnInit(): void {
       )
     }
 
-  public actualizar(){
-    //Validación
-    this.errors = [];
+  public actualizarConConfirmacion() {
+    const dialogRef = this.dialog.open(EditarEventoComponent, {
+      width: '300px'
+    });
 
+    dialogRef.afterClosed().subscribe(confirm => {
+      if (confirm) {
+        this.actualizar();
+      }
+    });
+  }
+
+  public actualizar() {
     this.errors = this.eventosService.validarEvento(this.evento, this.editar);
-    if(!$.isEmptyObject(this.errors)){
-      return false;
+    if (!$.isEmptyObject(this.errors)) {
+      return;
     }
-    console.log("Pasó la validación");
 
     this.evento.fecha = this.datePipe.transform(this.evento.fecha, 'yyyy-MM-dd');
     this.evento.hora_inicio = this.convertirHora(this.evento.hora_inicio);
     this.evento.hora_fin = this.convertirHora(this.evento.hora_fin);
 
+    const hora_inicio = this.evento.hora_inicio;
+    const hora_fin = this.evento.hora_fin;
+
+    if (hora_inicio >= hora_fin) {
+      alert("La hora de inicio debe ser menor que la hora de fin.");
+      return;
+    }
+
     this.eventosService.editarEvento(this.evento).subscribe(
-      (response)=>{
+      (response) => {
         alert("Evento editado correctamente");
-        console.log("Evento editado: ", response);
-        //Si se editó, entonces mandar al home
-        this.router.navigate(["home"]);
-      }, (error)=>{
-        alert("No se pudo editar el Evento");
+        this.router.navigate(["/home"]);
+      },
+      (error) => {
+        alert("No se pudo editar el evento");
+        console.error(error);
       }
     );
   }
 
+
+
   public onCheckboxChange(nombre: string, isChecked: boolean): void {
-  if (isChecked) {
-    if (!this.evento.publico.includes(nombre)) {
-      this.evento.publico.push(nombre);
-    }
-  } else {
-    const index = this.evento.publico.indexOf(nombre);
-    if (index !== -1) {
-      this.evento.publico.splice(index, 1);
+    if (isChecked) {
+      if (!this.evento.publico.includes(nombre)) {
+        this.evento.publico.push(nombre);
+      }
+    } else {
+      const index = this.evento.publico.indexOf(nombre);
+      if (index !== -1) {
+        this.evento.publico.splice(index, 1);
+      }
     }
   }
-}
-
 
   public soloLetrasNumerosEspacios(event: KeyboardEvent) {
     const tecla = event.key;
@@ -169,13 +206,13 @@ ngOnInit(): void {
     }
   }
 
- public soloLetras(event: KeyboardEvent) {
-  const char = event.key;
-  const regex = /^[a-zA-Z0-9\s.,;:]$/;
-  if (!regex.test(char)) {
-    event.preventDefault();
+  public soloLetras(event: KeyboardEvent) {
+    const char = event.key;
+    const regex = /^[a-zA-Z0-9\s.,;:]$/;
+    if (!regex.test(char)) {
+      event.preventDefault();
+    }
   }
-}
 
   public changeFecha(event :any){
     console.log(event);

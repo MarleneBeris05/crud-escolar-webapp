@@ -72,6 +72,12 @@ export class EventosService {
     }
     if (!this.validatorService.required(data["descripcion"])) {
       error["descripcion"] = this.errorService.required;
+    }else if(!this.validatorService.min(data["descripcion"], 20)){
+      error["descripcion"] = this.errorService.min(20);
+      alert("La longitud de caracteres de la descripción es menor, deben ser al menos 20");
+    }else if(!this.validatorService.max(data["descripcion"], 300)){
+      error["descripcion"] = this.errorService.max(300);
+      alert("La longitud de caracteres de la descripción es mayor, maximo 300");
     }
     if (!this.validatorService.required(data["cupo_max"])) {
       error["cupo_max"] = this.errorService.required;

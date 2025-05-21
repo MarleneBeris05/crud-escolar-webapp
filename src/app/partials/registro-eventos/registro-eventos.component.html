@@ -90,7 +90,7 @@
           <mat-label>Responsable del evento</mat-label>
           <mat-select [(ngModel)]="evento.responsable_id">
              <mat-option *ngFor="let r of responsables" [value]="r.id">
-                {{ r.user.first_name }} {{ r.user.last_name }}
+                 {{ r.nombre }}
              </mat-option>
           </mat-select>
         </mat-form-field>
@@ -98,22 +98,23 @@
 
         <mat-form-field class="mat-input" appearance="outline">
           <mat-label>Descripción</mat-label>
-          <input matInput [(ngModel)]="evento.descripcion"
-            placeholder="Escribe la descripción del evento" min="50" max="300"
+          <input matInput matInput minlength="20" maxlength="300" [(ngModel)]="evento.descripcion"
+            placeholder="Escribe la descripción del evento"
             (keypress)="soloLetras($event)">
+            <mat-hint align="end">{{evento.descripcion?.length || 20}}/300</mat-hint>
         </mat-form-field>
         <div *ngIf="errors.descripcion" class="invalid-feedback">{{ errors.descripcion }}</div>
 
         <mat-form-field class="mat-input" appearance="outline">
           <mat-label>Cupo máximo de asistentes</mat-label>
-          <input matInput type="number" [(ngModel)]="evento.cupo_max" placeholder="Máximo 999" min="1" max="999">
+          <input matInput type="number" [(ngModel)]="evento.cupo_max" placeholder="Máximo 999" mask = "000">
         </mat-form-field>
         <div *ngIf="errors.cupo_max" class="invalid-feedback">{{ errors.cupo_max }}</div>
   
         <div class="section-buttons">
             <button class="btn btn-danger" (click)="regresar()">Cancelar</button>
             <button *ngIf="!editar" class="btn btn-primary" type="submit" (click)="registrar()">Registrar</button>
-            <button *ngIf="editar" class="btn btn-primary" type="submit" (click)="actualizar()">Actualizar</button>
+            <button *ngIf="editar" class="btn btn-primary" type="submit" (click)="actualizarConConfirmacion()">Actualizar</button>
         </div>
   
       </div>
