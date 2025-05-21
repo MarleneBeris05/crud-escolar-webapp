@@ -2,12 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import DatalabelsPlugin from 'chartjs-plugin-datalabels';
 import { AdministradoresService } from 'src/app/services/administradores.service';
 
+
+
 @Component({
   selector: 'app-graficas-screen',
   templateUrl: './graficas-screen.component.html',
   styleUrls: ['./graficas-screen.component.scss']
 })
 export class GraficasScreenComponent implements OnInit{
+ 
 
   //Agregar chartjs-plugin-datalabels
   //Variables
@@ -30,7 +33,7 @@ export class GraficasScreenComponent implements OnInit{
 
   //Barras
   barChartData = {
-    labels: ["Congreso", "FePro", "Presentación Doctoral", "Feria de Matemáticas", "T-System"],
+    labels: ["Desarrollo Web", "Minería de Datos", "Redes", "Móviles", "Matemáticas"],
     datasets: [
       {
         data:[34, 43, 54, 28, 74],
@@ -65,7 +68,7 @@ export class GraficasScreenComponent implements OnInit{
     ]
   }
   pieChartOption = {
-    responsive:false
+    responsive:true
   }
   pieChartPlugins = [ DatalabelsPlugin ];
 
@@ -74,7 +77,7 @@ export class GraficasScreenComponent implements OnInit{
     labels: ["Administradores", "Maestros", "Alumnos"],
     datasets: [
       {
-        data:[89, 34, 43],
+        data:[10,20 ,30 ],
         label: 'Registro de usuarios',
         backgroundColor: [
           '#F88406',
@@ -85,7 +88,7 @@ export class GraficasScreenComponent implements OnInit{
     ]
   }
   doughnutChartOption = {
-    responsive:false
+    responsive:true
   }
   doughnutChartPlugins = [ DatalabelsPlugin ];
 
@@ -102,7 +105,22 @@ export class GraficasScreenComponent implements OnInit{
     this.administradoresServices.getTotalUsuarios().subscribe(
       (response)=>{
         this.total_user = response;
-        console.log("Total usuarios: ", this.total_user);
+      
+
+        const adminCount = response.admins || 0;
+      const teacherCount = response.maestros || 0;
+      const studentCount = response.alumnos || 0;
+
+      const newData = [adminCount, teacherCount, studentCount];
+
+      // Actualizar gráfica doughnut
+      this.doughnutChartData.datasets[0].data = newData;
+
+      // Actualizar gráfica circular (pie)
+      this.pieChartData.datasets[0].data = newData;
+
+
+      console.log("Datos  actualizados: ", this.total_user);
       }, (error)=>{
         alert("No se pudo obtener el total de cada rol de usuarios");
       }
